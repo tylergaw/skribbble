@@ -1,0 +1,93 @@
+// (alt cmd j)
+
+#import 'lib/jribbble-jstalk.js'
+
+var app = NSApplication.sharedApplication();
+var shotsGroup = null;
+var removeGroupOnCancel = null;
+var defaultGrid = "5x2";
+
+if (selection.count() == 0) {
+  shotsGroup = doc.currentPage().addLayerOfType("group");
+  shotsGroup.name = "Dribbble shots";
+  removeGroupOnCancel = doc.currentPage();
+}
+else {
+  var type = selection[0].className();
+
+  if (type == 'MSArtboardGroup' || type == 'MSLayerGroup') {
+    shotsGroup = selection[0];
+  }
+  else {
+    app.displayDialog_withTitle("You'll need to select an artboard or a group or you can select nothing and we'll create the elements on the current page.", "Invalid Selection");
+  }
+}
+
+if (shotsGroup != null) {
+  var player = doc.askForUserInput_initialValue("Player username or ID", "tylergaw");
+
+  if (player != null) {
+    if (player.length() == 0) {
+      app.displayDialog_withTitle("You'll need to provide a player username or id for this to do it's thing.", "No Player Named");
+    } else {
+      var gridSize = doc.askForUserInput_initialValue("How many rows and columns", defaultGrid);
+      var margin = doc.askForUserInput_initialValue("How much space between each shot?", "8");
+
+      // If we don't get a value go to the default
+      if (gridSize.length() == 0) gridSize = defaultGrid;
+      var gridParts = gridSize.split("x");
+      var cols = gridParts[0];
+      var rows = gridParts[1];
+      var curCol = 0;
+      var curRow = 0;
+      var numOfShots = cols * rows;
+
+      var shotWidth = 200;
+      var shotHeight = 150;
+
+      doc.showMessage('Creating ' + numOfShots + ' shots in "' + shotsGroup.name() + '"...');
+      var json = jribbble.getShotsByPlayerId(player, {page: 1, per_page: numOfShots});
+
+      for (var i = 0; i < json.shots.length; i += 1) {
+        var shot = json.shots[i];
+
+        var res = get(shot.image_teaser_url);
+        var img = NSImage.alloc().initWithData(res);
+        var layer = addImgToGroup(shotsGroup, img, shot.title);
+
+        layer.frame().addX((shotWidth + margin) * curCol);
+        layer.frame().addY((shotHeight + margin) * curRow);
+
+        if (curCol === (cols - 1)) {
+         curCol = 0;
+         curRow += 1;
+        }
+        else {
+          curCol += 1;
+        }
+      }
+    }
+  }
+  else {
+    // clean up if we canceled
+    if (removeGroupOnCancel != null) {
+      removeGroupOnCancel.removeLayer(shotsGroup);
+    }
+  }
+}
+
+// Request an image from the placeholder service lorempixel.com and add it
+// to the given group.
+function addImgToGroup (group, img, layerName) {
+  var imageCollection = group.documentData().images();
+  var imageData = imageCollection.addImage_name_convertColourspace(img, layerName, NO);
+  var newImage = MSBitmapLayer.alloc().initWithImage_parentFrame_name(imageData, group.frame(), layerName);
+  group.addLayer(newImage);
+  return newImage;
+}
+
+function get (url) {
+  var request = NSURLRequest.requestWithURL(NSURL.URLWithString(url));
+  var response = NSURLConnection.sendSynchronousRequest_returningResponse_error(request, null, null);
+  return response;
+}
