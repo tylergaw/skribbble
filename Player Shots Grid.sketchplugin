@@ -1,5 +1,3 @@
-// (alt cmd j)
-
 #import 'lib/jribbble-jstalk.js'
 
 var app = NSApplication.sharedApplication();
@@ -15,7 +13,11 @@ if (selection.count() == 0) {
 else {
   var type = selection[0].className();
 
-  if (type == 'MSArtboardGroup' || type == 'MSLayerGroup') {
+  if (type == 'MSArtboardGroup') {
+    shotsGroup = selection[0].addLayerOfType("group");
+    shotsGroup.name = "Dribbble shots";
+  }
+  else if (type == 'MSLayerGroup') {
     shotsGroup = selection[0];
   }
   else {
