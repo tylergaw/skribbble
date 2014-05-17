@@ -82,7 +82,7 @@ if (shotsGroup != null) {
 // to the given group.
 function addImgToGroup (group, img, layerName) {
   var imageCollection = group.documentData().images();
-  var imageData = imageCollection.addImage_name_convertColourspace(img, layerName, NO);
+  var imageData = imageCollection.addImage_name_convertColourspace(img, layerName, false);
   var newImage = MSBitmapLayer.alloc().initWithImage_parentFrame_name(imageData, group.frame(), layerName);
   group.addLayer(newImage);
   return newImage;
