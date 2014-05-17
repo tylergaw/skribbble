@@ -39,6 +39,16 @@ documentation can be found in the [plugin docs](http://bohemiancoding.com/sketch
  - You can change the name of that folder to anything you want.
  - You can find the plugins in the Plugins Menu > skribbble (or the name you gave it)
 
+## Usage
+
+ - Open a new or existing Sketch document
+ - Plugins > Menu > Skribbble > Player Shots Grid or Shots Grid
+ - If Player Shots, be sure to enter a Player username or id
+ - Update the options to your liking, hit OK
+ - The grid should be created on the canvas
+
+If you want the grid created on a specific artboard or within a group select
+the artboard or group before running the plugin.
 
 ## Sketch Requirements
 You'll need the latest release of Sketch 3, version 3.0.2. It's in the App Store.
