@@ -1,5 +1,5 @@
 #import 'lib/skribbble-utils.js'
-#import 'lib/jribbble-jstalk.js'
+#import 'lib/jribbble-cocoa.js'
 
 var shotsGroup = getShotsGroup();
 
